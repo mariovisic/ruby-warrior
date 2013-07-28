@@ -37,6 +37,7 @@ class Turn
     attack_enemies               ||
     retreat_from_attacking_enemy ||
     move_towards_attacking_enemy ||
+    attack_enemies_from_distance ||
     rest                         ||
     rescue_creatures             ||
     move_forward
@@ -70,5 +71,9 @@ class Turn
 
   def move_forward
     @warrior.walk!
+  end
+
+  def attack_enemies_from_distance
+    !@warrior.look.any?(&:captive?) && @warrior.look.any?(&:enemy?) && @warrior.shoot!
   end
 end
