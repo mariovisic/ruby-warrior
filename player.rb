@@ -4,7 +4,7 @@ class Player
   end
 
   def health_change(warrior)
-    @health.update(warrior.health)
+    @health.update(warrior.respond_to?(:health) ? warrior.health : 20)
     @health.diff
   end
 
@@ -27,8 +27,13 @@ end
 class Turn
   def initialize(warrior, health_change)
     @warrior       = warrior
-    @forwards      = warrior.feel
-    @backwards     = warrior.feel(:backward)
+    if @warrior.respond_to?(:feel)
+      @forwards      = warrior.feel
+      @backwards     = warrior.feel(:backward)
+    else
+      @forwards  = Struct.new(:wall?, :enemy?, :captive?).new(false, false, false)
+      @backwards = Struct.new(:wall?, :enemy?, :captive?).new(false, false, false)
+    end
     @health_change = health_change
   end
 
@@ -54,7 +59,9 @@ class Turn
   end
 
   def rest
-    @warrior.health < 20 && @warrior.rest!
+    if @warrior.respond_to?(:health)
+      @warrior.health < 20 && @warrior.rest!
+    end
   end
 
   def retreat_from_attacking_enemy
@@ -74,6 +81,8 @@ class Turn
   end
 
   def attack_enemies_from_distance
-    !@warrior.look.any?(&:captive?) && @warrior.look.any?(&:enemy?) && @warrior.shoot!
+    if @warrior.respond_to?(:look)
+     !@warrior.look.any?(&:captive?) && @warrior.look.any?(&:enemy?) && @warrior.shoot!
+    end
   end
 end
