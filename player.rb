@@ -65,7 +65,7 @@ class Turn
   end
 
   def retreat_from_attacking_enemy
-    @health_change < 0 && @warrior.health < 10 && @backwards.empty? && @warrior.walk!(:backward)
+    @health_change < 0 && @warrior.health < 7 && @backwards.empty? && @warrior.walk!(:backward)
   end
 
   def move_towards_attacking_enemy
